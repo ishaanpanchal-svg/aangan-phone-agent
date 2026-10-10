@@ -1,0 +1,12 @@
+{
+  "name": "aangan-phone-agent",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Phone enquiry agent backend for Aangan Studio (MESA Case 03)",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node test/run.js",
+    "seed": "node tools/seed.js"
+  },
+  "engines": { "node": ">=18" }
+}

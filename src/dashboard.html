@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Aangan Enquiries</title>
+<style>
+:root{--bg:#faf8f5;--fg:#1d1b19;--mut:#6b6560;--card:#fff;--line:#e6e0d8;--acc:#a8451f}
+@media(prefers-color-scheme:dark){:root{--bg:#161412;--fg:#f1ece6;--mut:#a39b92;--card:#211e1b;--line:#3a352f;--acc:#e08a5c}}
+body{margin:0;font:15px/1.5 system-ui,sans-serif;background:var(--bg);color:var(--fg);padding:0 16px 40px}
+main{max-width:1000px;margin:auto}
+h1{font-size:22px;margin:24px 0 4px}h2{font-size:16px;margin:28px 0 8px}
+.sub{color:var(--mut);margin:0 0 16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.k b{display:block;font-size:22px}.k span{color:var(--mut);font-size:13px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);font-size:14px;vertical-align:top}
+th{color:var(--mut);font-weight:600}tr.c{cursor:pointer}
+.tag{padding:2px 8px;border-radius:99px;border:1px solid var(--line);font-size:12px}
+.Forward,.Forward\ with\ flag{color:var(--acc);border-color:var(--acc)}
+pre{white-space:pre-wrap;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;font:13px/1.5 ui-monospace,monospace}
+.scroll{overflow-x:auto}
+</style></head><body><main>
+<h1>Phone enquiries</h1><p class="sub" id="sub">Loading…</p>
+<div class="grid" id="kpis"></div>
+<h2>What the tool costs</h2><div class="grid" id="costs"></div>
+<h2>Calls</h2><div class="scroll"><table><thead><tr><th>When</th><th>Caller</th><th>Project</th><th>Outcome</th><th>Slot</th><th>Cost</th></tr></thead><tbody id="rows"></tbody></table></div>
+<h2>Selected call</h2><div id="detail" class="sub">Click a row.</div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const k=(v,l)=>`<div class="k"><b>${esc(v)}</b><span>${esc(l)}</span></div>`;
+Promise.all([fetch('/api/stats').then(r=>r.json()),fetch('/api/calls').then(r=>r.json())]).then(([s,calls])=>{
+  $('sub').textContent=s.calls+' calls handled. Cost included, so no manual counting.';
+  $('kpis').innerHTML=k(s.calls,'calls')+k(s.answeredWithinTargetPct+'%','answered within 5 min')+k(s.afterHoursPct+'%','outside 10am-7pm')+k(s.forwarded+' ('+s.forwardedPct+'%)','sent to designers')+k(s.booked,'consultations booked')+k(s.declined,'politely declined')+k(s.human,'sent to a person');
+  $('costs').innerHTML=k('Rs '+s.costTotalInr,'total cost to run')+k('Rs '+s.costPerCallInr,'per call')+k('Rs '+s.costPerForwardedLeadInr,'per lead sent to a designer');
+  $('rows').innerHTML=calls.slice().reverse().map((c,i)=>`<tr class="c" data-i="${calls.length-1-i}"><td>${esc(new Date(c.startedAt).toLocaleString())}</td><td>${esc(c.fields.name||c.phone)}</td><td>${esc(c.fields.projectType||'-')}</td><td><span class="tag ${esc(c.outcome)}">${esc(c.outcome)}</span></td><td>${esc(c.bookedSlot||'-')}</td><td>Rs ${esc(c.cost.total)}</td></tr>`).join('');
+  document.querySelectorAll('tr.c').forEach(tr=>tr.onclick=()=>{
+    const c=calls[tr.dataset.i];
+    $('detail').innerHTML=`<pre>${esc(c.note)}</pre><b>Why:</b> ${esc(c.reasons.join(' '))}<h2>Transcript</h2><pre>${esc(c.transcript.map(t=>(t.role==='caller'?'Caller: ':'Agent: ')+t.text).join('\n'))}</pre>`+(c.recordingUrl?`<audio controls src="${esc(c.recordingUrl)}"></audio>`:'');
+  });
+});
+</script></main></body></html>

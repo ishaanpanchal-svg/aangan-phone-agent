@@ -1,0 +1,29 @@
+'use strict';
+// The phone calls from "Aangan_Sep 2026_Enquiries.pdf" (caller lines only; T08 was a missed call).
+// `expected` is my reading of Nikhil's rubric (qualified.md) and services.md, NOT a given answer key.
+const mk = (id, date, lines, expected, why) => ({
+  callId: id, phone: '+91980000' + id.slice(1).padStart(4, '0'), startedAt: `2026-09-${date}T06:00:00Z`, durationS: 240, answeredAfterS: 3,
+  transcript: lines.map(text => ({ role: 'caller', text })), expected, why,
+});
+
+module.exports = [
+  mk('T01', '02', ["Hi, I'm Priya. I got your number from a friend.", 'We have a 3BHK in Kothrud. We want to redo the whole thing, kitchen, living room, both bedrooms.', 'About 1,400 sq ft carpet.', "We'd like to be done by March. We're in no rush.", 'Yes, myself and my husband. He knows we are calling and is happy to go ahead.'], 'Forward', 'all five criteria pass'),
+  mk('T02', '03', ['Hi. I have a 2BHK in Wakad, can you tell me roughly how much something like that would cost?', 'Full redesign, modular kitchen, wardrobes, living room, both bedrooms. About 950 sq ft.', 'We move in November, so maybe starting design from October?', 'Can you give me a rough ballpark first? Even a range?', 'Okay, fair enough. Let us book it.'], 'Forward', 'price asked, deflected, still qualified'),
+  mk('T03', '03', ["Hello, my name is Suresh Patil. I'm in Nashik, would you be able to take on a project here? I want to redo my home office and study."], 'Decline', 'outside Pune and PCMC'),
+  mk('T04', '04', ['Hi, can someone come and give us some ideas for our living room? We are not planning to do the full thing right now. Just want suggestions on colours, furniture arrangement.', 'Oh I see. No, we are just exploring for now. Maybe later.'], 'Decline', 'advice only, no execution'),
+  mk('T05', '05', ["Hi, this is Aarti Mehta. Someone asked me to call.", 'We have a 4BHK in Koregaon Park, about 2,400 sq ft carpet. Complete redesign.', 'We want to move back in by February. About 4 months.', 'Yes please.'], 'Forward', 'passes all'),
+  mk('T06', '05', ["Hi, I'm calling about a commercial project. We're a startup, just got our first proper office space in Baner. About 800 sq ft. We need workstations for 20 people.", 'Bare shell.', 'We want to be operational by December.', "Yes, I'm the founder."], 'Forward', 'commercial inside size range'),
+  mk('T07', '08', ['Hello, I want to redo my living room and kitchen before Diwali. Can you take it up?', 'Even just the living room?', 'What if I start after Diwali?', 'Let me think and call back.'], 'Forward with flag', 'timeline unclear: agent must ask the deadline question (KNOWN LIMIT: festival dates are not parsed)'),
+  mk('T09', '10', ['I need to speak to someone right now. My project has been going for three months and my designer has not replied in five days. This is not acceptable.', 'Sheetal Deshpande. My designer is Aryan. Flat in Viman Nagar, 2BHK.'], 'Human', 'existing client complaint'),
+  mk('T10', '11', ['Hi. I have a 1BHK in Kharadi, about 550 sq ft. I want to do the kitchen and one bedroom. My budget is 1 to 1.5 lakh maximum for everything. Is that possible with you?'], 'Decline', 'budget clearly too low'),
+  mk('T11', '12', ["Hi, I'm in a rented apartment. Can you still take up a project?", "It's a 2BHK in Baner. I have a 3-year lease. I want to properly design the living room, bedroom, and kitchen, no structural changes.", 'Yes, the landlord is fine with it.', 'Yes please.'], 'Forward', 'rented flat is fine'),
+  mk('T12', '15', ["I'm calling about a villa project in Kalyani Nagar. My name is Anand Sharma. The property is about 5,500 sq ft, ground plus two floors. Full end-to-end design.", 'New construction. Possession was last month.', 'March next year to move in. No rush.'], 'Forward', 'large villa is allowed'),
+  mk('T13', '16', ["Hi, I want to redo my flat in Aundh. 3BHK, about 1,100 sq ft. What might it cost?", 'Kitchen, wardrobes in both bedrooms, living room. But seriously, can you not give me even a rough range?', "Fine. Let's book then."], 'Forward', 'price asked, deflected'),
+  mk('T14', '17', ['Hi, I wanted to inquire about an interior project for my parents. They have a 3BHK in Hadapsar, new possession.', "Yes, I'm doing the initial checking. They will decide.", "I'm just calling to see if it's worth pursuing."], 'Forward with flag', 'decision-maker is the parents: note the uncertainty'),
+  mk('T15', '18', ["Hi, I'm Smita. I'm getting possession of my flat in Undri in about six weeks. 2BHK, 875 sq ft. I want to start the design right away.", 'Full home, kitchen, wardrobes, living room.', 'Yes, my husband and I.'], 'Forward', 'possession date is not a deadline'),
+  mk('T16', '19', ["Hi, I'd called on Monday about a project. Someone said they'd get back to me. It's been two days.", 'Girish Nair. I told someone about my 3BHK in Viman Nagar.'], 'Human', 'missed follow-up, upset caller'),
+  mk('T17', '22', ["Hi, I called just now and got cut off. I'm Ritu Kapoor from Pimple Saudagar. 3BHK, about 1,050 sq ft.", 'Kitchen, wardrobes, living room.', 'Ideally done by March. Plenty of time.'], 'Forward', 'passes all'),
+  mk('T18', '23', ['Hi, I run a small coworking space. I have a 180 sq ft pod I want to make look really nice. Good lighting, a nice desk, some storage.', 'Not even for a smaller fee?'], 'Decline', 'under 500 sq ft commercial'),
+  mk('T19', '24', ["Hi, I'm planning to open a restaurant in Koregaon Park. I've seen your work. Would you be able to design the interiors?"], 'Decline', 'restaurants are out of scope'),
+  mk('T20', '25', ["Good morning. I'm Pooja. I have a 2BHK in Magarpatta. Kitchen, both bedrooms, living room. About 900 sq ft.", "We're flexible, a January start for execution would be ideal.", 'Yes, my husband and I.'], 'Forward', 'passes all'),
+];
