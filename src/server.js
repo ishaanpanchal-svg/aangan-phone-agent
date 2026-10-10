@@ -7,6 +7,7 @@ const store = require('./store');
 const { processCall } = require('./pipeline');
 const { compute } = require('./stats');
 const claims = require('./claims');
+const vaani = require('./vaani');
 
 const safeEq = (a, b) => {
   const x = Buffer.from(String(a)), y = Buffer.from(String(b));
@@ -38,6 +39,17 @@ function createServer(opts = {}) {
         for await (const c of req) { body += c; if (body.length > 1e6) return json(res, 413, { error: 'too large' }); }
         const call = JSON.parse(body);
         if (!call.callId || !call.phone || !Array.isArray(call.transcript)) return json(res, 400, { error: 'callId, phone, transcript required' });
+        const out = await processCall(call, db);
+        return json(res, 200, { ok: true, duplicate: out.duplicate, outcome: out.row && out.row.outcome });
+      }
+      if (req.method === 'POST' && url.pathname === '/webhook/vaani') {
+        if (!hookSecret || !safeEq(url.searchParams.get('key') || '', hookSecret)) return json(res, 401, { error: 'bad key' });
+        let body = '';
+        for await (const c of req) { body += c; if (body.length > 2e6) return json(res, 413, { error: 'too large' }); }
+        const p = JSON.parse(body);
+        if (p.event !== 'call_postprocessing') return json(res, 200, { ok: true, ignored: p.event }); // only the finished-and-analysed event carries the transcript
+        const call = await vaani.toCall(p, { env });
+        if (!call.transcript.length) return json(res, 200, { ok: true, ignored: 'empty transcript' });
         const out = await processCall(call, db);
         return json(res, 200, { ok: true, duplicate: out.duplicate, outcome: out.row && out.row.outcome });
       }

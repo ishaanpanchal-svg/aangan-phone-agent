@@ -3,3 +3,4 @@ data/
 node_modules/
 *.xlsx
 SYSTEM_STATUS.md
+webhook_url.txt

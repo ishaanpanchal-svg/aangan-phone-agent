@@ -123,6 +123,19 @@ t('E1/E2 stats include cost per call and per forwarded lead', async () => {
   assert(s.afterHoursPct > 0);
 });
 
+// ---- Vaani adapter
+t('Vaani webhook payload becomes a classified call; other events are ignored', async () => {
+  const vaani = require('../src/vaani');
+  const p = { event: 'call_postprocessing', call_id: 'v1', timestamp: '2026-10-10T14:00:00Z', data: { call_duration: 150000, recording_url: 'https://x/r.ogg',
+    transcript: 'AGENT: Hello, this is Aangan Studio.' + String.fromCharCode(10, 10) + 'USER: Hi, I am Priya. I have a 3BHK in Baner, 1200 sq ft. I need it in four months.' } };
+  const c = await vaani.toCall(p, { env: {} });
+  assert.strictEqual(c.transcript[0].role, 'agent');
+  assert.strictEqual(c.transcript[1].role, 'caller');
+  assert.strictEqual(c.durationS, 150);
+  assert.strictEqual(classify(c).outcome, 'Forward');
+  assert.deepStrictEqual(vaani.toTranscript([{ role: 'assistant', text: 'a' }, { speaker: 'user', text: 'b' }]).map(x => x.role), ['agent', 'caller']);
+});
+
 // ---- server (E3)
 t('E3 server: dashboard locked without password, webhook needs secret', async () => {
   const db = tmp();
