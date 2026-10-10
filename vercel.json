@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/index.js": {
-      "includeFiles": "{src,config}/**",
+      "includeFiles": "src/dashboard.html",
       "maxDuration": 30
     }
   },
