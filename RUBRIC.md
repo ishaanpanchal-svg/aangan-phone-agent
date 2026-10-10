@@ -30,7 +30,7 @@ Greeting set; call cap 5 minutes; idle prompt 15 s, hang-up 45 s; Pune place nam
 | C1 | Note contains name, phone, project type, location, size, budget, timeline, booked slot, and a 2-line summary | `test/run.js` |
 | C2 | The designer's first call never needs to repeat a question the agent asked (every field either filled or marked "not given") | `test/run.js` |
 | C3 | No price is ever stored or sent | `test/run.js` |
-| C4 | Delivered to Telegram (claim button and transcript reply built; first-claim-wins handler and 30 min reminder NOT yet built, needs the live bot) | `test/run.js` (dry-run) |
+| C4 | Delivered to Telegram (claim button, first claim wins, 30 min reminder, transcript reply; button presses need the public address (step 5)) | `test/run.js` (dry-run) |
 | C5 | Repeat caller (same phone) is recognised, not duplicated | `test/run.js` |
 
 ## D. Qualification

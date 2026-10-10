@@ -79,6 +79,26 @@ t('booking email only when booked and never for a decline', async () => {
   assert(!notify.sent.some(m => m.channel === 'email'));
 });
 
+t('C4 claim button: first claim wins, second is refused', async () => {
+  const claims = require('../src/claims');
+  const db = tmp();
+  await processCall(clone(S.qualified), db);
+  const mk = (id, name) => ({ callback_query: { id, data: 'claim:s1', from: { first_name: name }, message: { chat: { id: 1 }, message_id: 9 } } });
+  const a = await claims.handleUpdate(mk('c1', 'Aryan'), db);
+  const b = await claims.handleUpdate(mk('c2', 'Neel'), db);
+  assert.strictEqual(a.result, 'claimed');
+  assert.strictEqual(b.result, 'already');
+  assert.strictEqual(db.all()[0].claimedBy, 'Aryan');
+});
+t('C4 reminder after 30 minutes, once, and not if claimed', async () => {
+  const claims = require('../src/claims');
+  const db = tmp();
+  await processCall(clone(S.qualified), db);
+  assert.strictEqual(await claims.sendReminders(db, Date.now() + 10 * 60000), 0);
+  assert.strictEqual(await claims.sendReminders(db, Date.now() + 31 * 60000), 1);
+  assert.strictEqual(await claims.sendReminders(db, Date.now() + 90 * 60000), 0);
+});
+
 // ---- store (C5)
 t('C5 repeat caller recognised, webhook retry is idempotent', async () => {
   const db = tmp();

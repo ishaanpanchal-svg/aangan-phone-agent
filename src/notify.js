@@ -46,4 +46,9 @@ async function sendBookingEmail(row, note) {
   return msg;
 }
 
-module.exports = { sendLead, sendBookingEmail, sent, chunk };
+async function tgApi(method, body) {
+  if (!live()) { sent.push({ channel: 'telegram-api', method, ...body }); return { ok: true }; }
+  return post(`https://api.telegram.org/bot${env().TELEGRAM_BOT_TOKEN}/${method}`, body);
+}
+
+module.exports = { sendLead, sendBookingEmail, telegramSend, tgApi, sent, chunk };

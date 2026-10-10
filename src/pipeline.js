@@ -19,6 +19,7 @@ async function processCall(call, store) {
     callId: call.callId,
     phone: call.phone,
     startedAt: call.startedAt,
+    createdAt: new Date().toISOString(),
     durationS: call.durationS,
     answeredAfterS: call.answeredAfterS ?? 0,
     outcome: result.outcome,

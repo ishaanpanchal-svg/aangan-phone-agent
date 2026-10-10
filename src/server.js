@@ -6,6 +6,7 @@ const crypto = require('crypto');
 const store = require('./store');
 const { processCall } = require('./pipeline');
 const { compute } = require('./stats');
+const claims = require('./claims');
 
 const safeEq = (a, b) => {
   const x = Buffer.from(String(a)), y = Buffer.from(String(b));
@@ -40,6 +41,13 @@ function createServer(opts = {}) {
         const out = await processCall(call, db);
         return json(res, 200, { ok: true, duplicate: out.duplicate, outcome: out.row && out.row.outcome });
       }
+      if (req.method === 'POST' && url.pathname === '/telegram/webhook') {
+        if (!hookSecret || !safeEq(req.headers['x-telegram-bot-api-secret-token'] || '', hookSecret)) return json(res, 401, { error: 'bad secret' });
+        let body = '';
+        for await (const c of req) body += c;
+        await claims.handleUpdate(JSON.parse(body), db);
+        return json(res, 200, { ok: true });
+      }
       if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true });
       if (req.method === 'GET' && ['/', '/api/calls', '/api/stats'].includes(url.pathname)) {
         if (!authed(req)) return deny(res);
@@ -57,7 +65,9 @@ function createServer(opts = {}) {
 
 if (require.main === module) {
   const port = process.env.PORT || 3000;
-  createServer().listen(port, () => console.log(`Aangan dashboard on http://localhost:${port}`));
+  const db = store.open();
+  setInterval(() => claims.sendReminders(db).catch(() => {}), 60 * 1000);
+  createServer({ store: db }).listen(port, () => console.log(`Aangan dashboard on http://localhost:${port}`));
 }
 
 module.exports = { createServer };
