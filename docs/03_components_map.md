@@ -4,7 +4,7 @@ Trigger → Input → Context → Processing → AI → Output.
 
 | Stage | What it is | In this build |
 |---|---|---|
-| **Trigger** | A caller dials the studio number at any hour | Voice platform (Vaani) answers; on hang-up it POSTs the finished call to `/webhook/call-ended` (`src/app.js`), protected by a shared secret |
+| **Trigger** | A caller dials the studio number at any hour | Voice platform (Vaani) answers; on hang-up it POSTs the finished call to `/webhook/call-ended` (`src/router.js`), protected by a shared secret |
 | **Input** | Call id, phone, start time, duration, speaker-tagged transcript, recording URL, voice cost | The webhook payload; checked for `callId`, `phone`, `transcript` |
 | **Context** | What the system must know to behave like Aangan | `config/business.json` (services, out-of-scope, Pune place names, thresholds, the fixed price deflection, unit costs); `agent/agent_instructions.md` (the rules from services.md, pricing.md and qualified.md); store lookup by phone for repeat callers |
 | **Processing** | Deterministic steps around the AI | `classify.js` extracts fields and applies thresholds → Forward / Forward with flag / Decline / Human; `handoff.js` builds the note; `pricing.js` guards against price leakage; `store.js` makes retries idempotent |

@@ -14,7 +14,7 @@ const { compute } = require('../src/stats');
 const notify = require('../src/notify');
 const store = require('../src/store');
 const { processCall } = require('../src/pipeline');
-const { createServer } = require('../src/app');
+const { createServer } = require('../src/router');
 
 const tests = [];
 const t = (name, fn) => tests.push([name, fn]);
@@ -167,7 +167,7 @@ t('Supabase store: add is idempotent, byPhone/has/update work', async () => {
 });
 t('Vercel entry restores the original path after the rewrite', async () => {
   const seen = [];
-  const handler = require('../src/app').createHandler({ store: tmp(), env: { DASHBOARD_PASSWORD: 'pw' } });
+  const handler = require('../src/router').createHandler({ store: tmp(), env: { DASHBOARD_PASSWORD: 'pw' } });
   const entry = require('../api/index.js');
   const res = { writeHead: c => seen.push(c), end: () => {} };
   await entry({ url: '/api/index?path=api%2Fstats', headers: {}, method: 'GET' }, res);
