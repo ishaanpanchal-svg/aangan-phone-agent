@@ -35,7 +35,9 @@ function openFile(file) {
 
 function openSupabase(url, key, fetchFn = fetch) {
   const base = url.replace(/\/$/, '') + '/rest/v1/calls';
-  const headers = { apikey: key, authorization: 'Bearer ' + key, 'content-type': 'application/json' };
+  // New-style keys (sb_secret_...) are not JWTs and go in `apikey` only; legacy service_role JWTs also need Authorization.
+  const headers = { apikey: key, 'content-type': 'application/json' };
+  if (!key.startsWith('sb_')) headers.authorization = 'Bearer ' + key;
   const call = async (query, opts = {}) => {
     const res = await fetchFn(base + query, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
     if (!res.ok) throw new Error('supabase ' + res.status + ' ' + (await res.text()).slice(0, 200));
