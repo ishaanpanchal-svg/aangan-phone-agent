@@ -123,6 +123,22 @@ t('E1/E2 stats include cost per call and per forwarded lead', async () => {
   assert(s.afterHoursPct > 0);
 });
 
+// ---- regressions from the first real Vaani test call
+t('real call: curly apostrophe name, word-number months, unlisted place are read', () => {
+  const { extract } = require('../src/classify');
+  const e = extract([{ role: 'caller', text: "Hello. I’m Rahul Mehta. I have a three BHK in Court Road. It is 1,300 square feet. I want it done in three months." }], '2026-10-10T15:00:00Z');
+  assert.strictEqual(e.name, 'Rahul Mehta');
+  assert.strictEqual(e.location, 'Court Road');
+  assert.strictEqual(Math.round(e.timelineWeeks), 13);
+});
+t('agent claims a booking that Cal.com does not have: flagged for a human call', async () => {
+  const vaani = require('../src/vaani');
+  const p = { event: 'call_postprocessing', call_id: 'v2', timestamp: '2026-10-10T14:00:00Z', data: { transcript: '[15:17:51] AGENT: Hello.\n[15:18:03] USER: I am Rahul Mehta, 3BHK in Baner, 1200 sq ft, done in four months.\n[15:18:41] AGENT: I have scheduled your consultation for October 12th at 9:30 AM.' } };
+  const c = await vaani.toCall(p, { env: {} });
+  assert(c.bookingClaimed && !c.bookedSlot && c.durationS > 0);
+  assert(classify(c).flags.some(f => /none exists in Cal\.com/.test(f)));
+});
+
 // ---- Vaani adapter
 t('Vaani webhook payload becomes a classified call; other events are ignored', async () => {
   const vaani = require('../src/vaani');

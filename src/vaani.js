@@ -17,6 +17,12 @@ function toTranscript(t) {
   return out;
 }
 
+// "[15:17:51] AGENT: ..." lines: seconds between first and last stamp, plus a small tail
+function durationFromStamps(t) {
+  const s = typeof t === 'string' ? [...t.matchAll(/\[(\d\d):(\d\d):(\d\d)\]/g)].map(m => +m[1] * 3600 + +m[2] * 60 + +m[3]) : [];
+  return s.length > 1 ? Math.max(0, s[s.length - 1] - s[0]) + 5 : 0;
+}
+
 async function findBooking(sinceMs, env = process.env, fetchFn = fetch) {
   if (!env.CAL_API_KEY) return null;
   try {
@@ -31,17 +37,20 @@ async function findBooking(sinceMs, env = process.env, fetchFn = fetch) {
 // payload: {event:'call_postprocessing', call_id, timestamp, data:{room_name,call_id,call_duration(ms),transcript,summary,recording_url,entities}}
 async function toCall(payload, opts = {}) {
   const d = payload.data || {};
-  const durationS = Math.round((d.call_duration || 0) / 1000);
+  const transcript = toTranscript(d.transcript);
+  let durationS = Math.round((Number(d.call_duration) || 0) / 1000);
+  if (!durationS) durationS = durationFromStamps(d.transcript);
   const endMs = payload.timestamp ? new Date(payload.timestamp).getTime() : Date.now();
   const startedAt = new Date(endMs - durationS * 1000).toISOString();
-  const bookedSlot = await findBooking(endMs - durationS * 1000 - 60000, opts.env, opts.fetchFn);
+  const bookedSlot = await findBooking(endMs - durationS * 1000 - 120000, opts.env, opts.fetchFn);
   return {
     callId: String(payload.call_id || d.call_id || d.room_name),
     phone: d.phone_number || (d.entities && (d.entities.phone || d.entities.phone_number)) || 'unknown (web call)',
     startedAt,
     durationS,
     answeredAfterS: 0, // the agent answers immediately
-    transcript: toTranscript(d.transcript),
+    transcript,
+    bookingClaimed: transcript.some(t => t.role === 'agent' && /(scheduled|booked|confirmed) your (consultation|appointment)|have (scheduled|booked)/i.test(t.text)),
     recordingUrl: d.recording_url || null,
     summary: d.summary || null,
     bookedSlot,

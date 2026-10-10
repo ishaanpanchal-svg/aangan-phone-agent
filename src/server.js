@@ -47,6 +47,7 @@ function createServer(opts = {}) {
         let body = '';
         for await (const c of req) { body += c; if (body.length > 2e6) return json(res, 413, { error: 'too large' }); }
         const p = JSON.parse(body);
+        try { fs.mkdirSync(path.join(__dirname, '..', 'data', 'raw'), { recursive: true }); fs.writeFileSync(path.join(__dirname, '..', 'data', 'raw', Date.now() + '-' + String(p.event).replace(/W/g, '') + '.json'), body); } catch {}
         if (p.event !== 'call_postprocessing') return json(res, 200, { ok: true, ignored: p.event }); // only the finished-and-analysed event carries the transcript
         const call = await vaani.toCall(p, { env });
         if (!call.transcript.length) return json(res, 200, { ok: true, ignored: 'empty transcript' });

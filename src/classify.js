@@ -10,7 +10,7 @@ const PROXY = /(for my (parents|in-laws|father|mother|friend)|initial (checking|
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
 const WORDNUM = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12 };
 
-const callerText = transcript => transcript.filter(t => t.role === 'caller').map(t => t.text).join(' ');
+const callerText = transcript => transcript.filter(t => t.role === 'caller').map(t => String(t.text).replace(/[‘’]/g, "'")).join(' ');
 const num = s => (WORDNUM[String(s).toLowerCase()] ?? parseFloat(String(s).replace(/,/g, '')));
 const has = (text, list) => list.find(k => text.toLowerCase().includes(k.toLowerCase())) || null;
 
@@ -26,7 +26,7 @@ function timelineWeeks(text, startedAt) {
   }
   if (best != null) return best;
 
-  const mo = text.match(/(\d+)(?:\s*-\s*\d+)?\s*months?/i);
+  const mo = text.match(/(\d+|one|two|three|four|five|six|seven|eight|nine|ten|twelve)(?:\s*(?:-|to)\s*(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten|twelve))?\s*months?/i);
   if (mo) return num(mo[1]) * 4.3;
 
   // Named months: the latest one named is the deadline ("start October, move in November").
@@ -46,8 +46,8 @@ function extract(transcript, startedAt) {
   const text = callerText(transcript);
   const out = { name: null, projectKind: null, projectType: null, location: null, sqft: null, budgetLakh: null, timelineWeeks: null, priceAsked: isPriceQuestion(text) };
 
-  const nm = text.match(/(?:my name is|this is|i am|i'm|name's)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)/);
-  if (nm && !/^(Calling|Planning|Doing|Getting)$/.test(nm[1])) out.name = nm[1];
+  const nm = text.match(/(?:[Mm]y name is|[Tt]his is|\bI am|\bI'm|\bi am|\bi'm|[Nn]ame's)\s+([A-Za-z]+(?:\s[A-Z][a-z]+)?)/);
+  if (nm) { const n = nm[1].split(/\s+/).map(w => w[0].toUpperCase() + w.slice(1).toLowerCase()); if (!/^(calling|planning|doing|getting|looking|the|a|an|in|from|not|just|sole|owner|here)$/i.test(n[0]) && /^[A-Za-z]+$/.test(n[0])) out.name = n.join(' '); }
 
   if (/(office|clinic|coworking|startup|studio space)/i.test(text) && !/home office/i.test(text)) { out.projectKind = 'commercial'; out.projectType = 'Commercial'; }
   else if (/(flat|bhk|apartment|villa|home|house|living room|bedroom|kitchen)/i.test(text)) { out.projectKind = 'residential'; out.projectType = 'Residential'; }
@@ -56,6 +56,7 @@ function extract(transcript, startedAt) {
   const outside = cfg.outsideServiceArea.find(p => low.includes(p.toLowerCase()));
   out.outsideArea = outside || null;
   out.location = outside || cfg.placeNames.find(p => low.includes(p.toLowerCase())) || null;
+  if (!out.location) { const m = text.match(/\b(?:in|at|near)\s+([A-Z][a-z]+(?:\s[A-Z][a-z]+)?)/); if (m) { out.location = m[1]; out.locationUnlisted = true; } }
 
   const sq = text.match(/([\d,]{3,6})\s*(?:sq\.?\s*ft|sqft|square feet)/i);
   if (sq) out.sqft = num(sq[1]);
@@ -90,6 +91,8 @@ function classify(call) {
   if (!f.projectKind) return done('Decline', ['Not enough information: no project described, so not forwarded as an incomplete lead.']);
 
   if (!f.location) flags.push('Location not confirmed');
+  else if (f.locationUnlisted) flags.push('Location "' + f.location + '" is not on the service-area list: confirm it is in Pune or PCMC');
+  if (call.bookingClaimed && !call.bookedSlot) flags.push('Agent said a consultation was booked but none exists in Cal.com: call the customer to book');
   if (/diwali/i.test(text) && f.timelineWeeks == null) flags.push('Festival deadline: confirm the timeline');
   if (f.timelineWeeks != null && f.timelineWeeks < q.tightBelowWeeks) flags.push('Tight timeline (6 to 8 weeks)');
   if (PROXY.test(text)) flags.push('5 Decision-maker: caller may not be the decision-maker');
