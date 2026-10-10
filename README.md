@@ -8,7 +8,7 @@ npm run seed      # load synthetic sample calls
 set DASHBOARD_PASSWORD=pick-one && set WEBHOOK_SECRET=pick-one && npm run serve
 ```
 
-Dashboard: http://localhost:3000 (password required, locked if none is set).
+Dashboard: http://localhost:3000 (opens directly; phone numbers are masked). Set DASHBOARD_LOCK=1 and DASHBOARD_PASSWORD to require a login.
 
 | Path | What |
 |---|---|

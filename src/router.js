@@ -20,8 +20,13 @@ function createHandler(opts = {}) {
   const dashPw = env.DASHBOARD_PASSWORD;
   const hookSecret = env.WEBHOOK_SECRET;
 
+  // The dashboard opens directly. Set DASHBOARD_LOCK=1 (plus DASHBOARD_PASSWORD) to require a login again.
+  const locked = env.DASHBOARD_LOCK === '1';
+  const maskPhone = p => (/^\+?\d{6,}$/.test(String(p)) ? '******' + String(p).slice(-4) : p);
+  const view = rows => (locked ? rows : rows.map(r => ({ ...r, phone: maskPhone(r.phone), note: String(r.note || '').replace(/Phone: \S+/, m => 'Phone: ' + maskPhone(m.slice(7))) })));
   const authed = req => {
-    if (!dashPw) return false; // no password configured = locked, never open
+    if (!locked) return true;
+    if (!dashPw) return false; // locked but no password configured = closed to everyone
     const h = req.headers.authorization || '';
     if (!h.startsWith('Basic ')) return false;
     const pw = Buffer.from(h.slice(6), 'base64').toString().split(':').slice(1).join(':');
@@ -70,7 +75,7 @@ function createHandler(opts = {}) {
       if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true });
       if (req.method === 'GET' && ['/', '/api/calls', '/api/stats'].includes(url.pathname)) {
         if (!authed(req)) return deny(res);
-        if (url.pathname === '/api/calls') return json(res, 200, await db.all());
+        if (url.pathname === '/api/calls') return json(res, 200, view(await db.all()));
         if (url.pathname === '/api/stats') return json(res, 200, compute(await db.all()));
         res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
         return res.end(fs.readFileSync(path.join(__dirname, 'dashboard.html')));

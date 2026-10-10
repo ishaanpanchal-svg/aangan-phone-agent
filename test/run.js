@@ -174,6 +174,22 @@ t('Vercel entry restores the original path after the rewrite', async () => {
   assert(seen.length === 1);
 });
 
+t('open dashboard needs no login, masks phone numbers, webhook stays protected', async () => {
+  const db = tmp();
+  await processCall({ ...clone(S.qualified), phone: '+919812345678' }, db);
+  const srv = createServer({ store: db, env: { WEBHOOK_SECRET: 'sec', DASHBOARD_PASSWORD: 'pw' } });
+  await new Promise(r => srv.listen(0, r));
+  const port = srv.address().port;
+  const get = p => new Promise(res => http.get({ port, path: p }, x => { let d = ''; x.on('data', c => d += c); x.on('end', () => res({ code: x.statusCode, d })); }));
+  assert.strictEqual((await get('/')).code, 200);
+  const calls = await get('/api/calls');
+  assert.strictEqual(calls.code, 200);
+  assert(!calls.d.includes('9812345678') && calls.d.includes('5678'));
+  const post = await new Promise(res => { const r = http.request({ port, method: 'POST', path: '/webhook/vaani' }, x => res(x.statusCode)); r.end('{}'); });
+  assert.strictEqual(post, 401);
+  srv.close();
+});
+
 // ---- Vaani adapter
 t('Vaani webhook payload becomes a classified call; other events are ignored', async () => {
   const vaani = require('../src/vaani');
@@ -190,7 +206,7 @@ t('Vaani webhook payload becomes a classified call; other events are ignored', a
 // ---- server (E3)
 t('E3 server: dashboard locked without password, webhook needs secret', async () => {
   const db = tmp();
-  const srv = createServer({ store: db, env: { DASHBOARD_PASSWORD: 'pw', WEBHOOK_SECRET: 'sec' } });
+  const srv = createServer({ store: db, env: { DASHBOARD_LOCK: '1', DASHBOARD_PASSWORD: 'pw', WEBHOOK_SECRET: 'sec' } });
   await new Promise(r => srv.listen(0, r));
   const port = srv.address().port;
   const req = (method, p, headers = {}, body) => new Promise(res => {
