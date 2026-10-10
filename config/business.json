@@ -89,7 +89,7 @@
   "pricingDeflection": "Pricing depends on the site, the materials you choose, and the scope. Your designer will walk you through it in detail at the consultation. I can book that for you right now if you'd like.",
   "costsInr": {
     "_note": "ASSUMED unit costs. The call payload's own cost overrides the voice figure.",
-    "voicePerMinute": 5.5,
+    "voicePerMinute": 5.6,
     "aiPerCall": 0.8,
     "telegramPerMessage": 0,
     "dashboardHostingPerMonth": 0

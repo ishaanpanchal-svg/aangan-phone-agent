@@ -7,7 +7,7 @@ The case files are now in `Case 03 Seed Data/` and the rules are built from them
 | Minimum budget Rs 3.5 lakh | pricing.md gives Rs 3.5 lakh as the lowest single-room price. T10 (Rs 1 to 1.5 lakh) was declined by the front desk | `config/business.json` |
 | 500 sq ft commercial minimum | Only in transcript T18, not in services.md | same |
 | Under 6 weeks declined, 6 to 8 weeks flagged | services.md says 6 weeks; qualified.md says 8 to 10 weeks. They disagree | same |
-| Unit costs (voice Rs 5.5/min, AI Rs 0.8/call) | Placeholders until real invoices | same |
+| Unit costs (voice Rs 5.6/min per Vaani estimate, AI Rs 0.8/call) | Placeholders until real invoices | same |
 | Webhook field names | Not known until Vaani docs are checked | `src/server.js` |
 | Expected answers for the 18 phone calls | My reading of qualified.md, not an answer key | `samples/enquiries.js` |
 | Nine check names | Session notes not provided | `docs/02_nine_checks.md` |
