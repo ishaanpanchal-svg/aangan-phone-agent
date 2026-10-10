@@ -31,3 +31,7 @@ Call ─► Voice agent ─► call-ended webhook ─► classify ─► handoff
 
 ## Extending to WhatsApp and the web form (not built)
 Each channel produces the same `{callId, phone, transcript}` record. Only the adapter changes (a WhatsApp Business webhook, a form POST). Classification, handoff, store, notify and dashboard are reused unchanged.
+
+## Full map with deployment
+
+See ![components map](components-map.png) ([SVG](components-map.svg)). Regenerate with `node tools/make_components_map.js`.

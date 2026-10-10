@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1434 1180" width="1434" height="1180" font-family="Segoe UI, Helvetica, Arial, sans-serif">
+<title>Aangan Studio phone enquiry agent: components map and deployment</title>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6b7280"/></marker></defs>
+<rect width="1434" height="1180" fill="#ffffff"/>
+<rect x="0" y="0" width="1434" height="70" fill="#1f2a3a"/>
+<text x="87.5" y="41" text-anchor="middle" font-size="19" fill="#9aa5b5">Actor</text>
+<text x="278.6666666666667" y="43" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Trigger</text>
+<text x="486" y="43" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Input</text>
+<text x="693.3333333333334" y="43" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Context</text>
+<text x="900.6666666666667" y="43" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Processing</text>
+<text x="1108" y="43" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">AI</text>
+<text x="1315.3333333333335" y="43" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Output</text>
+<rect x="175" y="70" width="1259" height="135" fill="#ffffff"/>
+<rect x="0" y="70" width="175" height="135" fill="#1f2a3a"/>
+<text x="87.5" y="135.5" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Caller</text>
+<text x="87.5" y="163.5" text-anchor="middle" font-size="19" fill="#aab4c3">Prospect</text>
+<rect x="175" y="205" width="1259" height="135" fill="#f5f3ee"/>
+<rect x="0" y="205" width="175" height="135" fill="#1f2a3a"/>
+<text x="87.5" y="270.5" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Vaani</text>
+<text x="87.5" y="298.5" text-anchor="middle" font-size="19" fill="#aab4c3">Voice agent</text>
+<rect x="175" y="340" width="1259" height="135" fill="#ffffff"/>
+<rect x="0" y="340" width="175" height="135" fill="#1f2a3a"/>
+<text x="87.5" y="405.5" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Cal.com</text>
+<text x="87.5" y="433.5" text-anchor="middle" font-size="19" fill="#aab4c3">Booking</text>
+<rect x="175" y="475" width="1259" height="135" fill="#f5f3ee"/>
+<rect x="0" y="475" width="175" height="135" fill="#1f2a3a"/>
+<text x="87.5" y="540.5" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Server</text>
+<text x="87.5" y="568.5" text-anchor="middle" font-size="19" fill="#aab4c3">Vercel + rules</text>
+<rect x="175" y="610" width="1259" height="135" fill="#ffffff"/>
+<rect x="0" y="610" width="175" height="135" fill="#1f2a3a"/>
+<text x="87.5" y="675.5" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Designers</text>
+<text x="87.5" y="703.5" text-anchor="middle" font-size="19" fill="#aab4c3">Telegram</text>
+<rect x="175" y="745" width="1259" height="135" fill="#f5f3ee"/>
+<rect x="0" y="745" width="175" height="135" fill="#1f2a3a"/>
+<text x="87.5" y="810.5" text-anchor="middle" font-size="25" font-weight="700" fill="#ffffff">Nikhil</text>
+<text x="87.5" y="838.5" text-anchor="middle" font-size="19" fill="#aab4c3">Dashboard</text>
+<line x1="382.33333333333337" y1="70" x2="382.33333333333337" y2="880" stroke="#d9d5cc" stroke-width="1.5"/>
+<line x1="589.6666666666667" y1="70" x2="589.6666666666667" y2="880" stroke="#d9d5cc" stroke-width="1.5"/>
+<line x1="797" y1="70" x2="797" y2="880" stroke="#d9d5cc" stroke-width="1.5"/>
+<line x1="1004.3333333333334" y1="70" x2="1004.3333333333334" y2="880" stroke="#d9d5cc" stroke-width="1.5"/>
+<line x1="1211.6666666666667" y1="70" x2="1211.6666666666667" y2="880" stroke="#d9d5cc" stroke-width="1.5"/>
+<line x1="1404" y1="70" x2="1404" y2="880" stroke="#d9d5cc" stroke-width="1.5"/>
+<path d="M369.6666666666667,137.5 L486,137.5 L486,222.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M577,272.5 L1017,272.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M577,272.5 L693.3333333333334,272.5 L693.3333333333334,357.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M784.3333333333334,407.5 L1224.3333333333335,407.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M784.3333333333334,407.5 L900.6666666666667,407.5 L900.6666666666667,492.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M991.6666666666667,542.5 L1017,542.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M1199,542.5 L1224.3333333333335,542.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M1315.3333333333335,592.5 L1315.3333333333335,627.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<path d="M1315.3333333333335,727.5 L1315.3333333333335,762.5" fill="none" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<rect x="187.66666666666669" y="87.5" width="182" height="100" rx="12" fill="#f3f0ea" stroke="#6b6760" stroke-width="3"/>
+<text x="278.6666666666667" y="131.5" text-anchor="middle" font-size="19" font-weight="700" fill="#33312d">Phones</text>
+<text x="278.6666666666667" y="159.5" text-anchor="middle" font-size="17" fill="#33312d" opacity="0.85">Aangan, any hour</text>
+<rect x="395" y="222.5" width="182" height="100" rx="12" fill="#eeeafc" stroke="#4f46c8" stroke-width="3"/>
+<text x="486" y="266.5" text-anchor="middle" font-size="19" font-weight="700" fill="#352b8f">Answers, asks</text>
+<text x="486" y="294.5" text-anchor="middle" font-size="17" fill="#352b8f" opacity="0.85">one question at a time</text>
+<rect x="1017" y="222.5" width="182" height="100" rx="12" fill="#fbebd5" stroke="#9a5a12" stroke-width="3"/>
+<text x="1108" y="266.5" text-anchor="middle" font-size="19" font-weight="700" fill="#633708">Gemini 3.5 Flash</text>
+<text x="1108" y="294.5" text-anchor="middle" font-size="17" fill="#633708" opacity="0.85">brain inside Vaani</text>
+<rect x="602.3333333333334" y="357.5" width="182" height="100" rx="12" fill="#e4f5ee" stroke="#0f7a5a" stroke-width="3"/>
+<text x="693.3333333333334" y="401.5" text-anchor="middle" font-size="19" font-weight="700" fill="#0b4f3a">Offers free slots</text>
+<text x="693.3333333333334" y="429.5" text-anchor="middle" font-size="17" fill="#0b4f3a" opacity="0.85">books 30-min consult</text>
+<rect x="1224.3333333333335" y="357.5" width="182" height="100" rx="12" fill="#e4f5ee" stroke="#0f7a5a" stroke-width="3"/>
+<text x="1315.3333333333335" y="401.5" text-anchor="middle" font-size="19" font-weight="700" fill="#0b4f3a">Calendar + Gmail</text>
+<text x="1315.3333333333335" y="429.5" text-anchor="middle" font-size="17" fill="#0b4f3a" opacity="0.85">Cal.com confirmation</text>
+<rect x="809.6666666666667" y="492.5" width="182" height="100" rx="12" fill="#e6f0fb" stroke="#1f5fa8" stroke-width="3"/>
+<text x="900.6666666666667" y="536.5" text-anchor="middle" font-size="19" font-weight="700" fill="#123f73">Receives call</text>
+<text x="900.6666666666667" y="564.5" text-anchor="middle" font-size="17" fill="#123f73" opacity="0.85">+ transcript</text>
+<rect x="1017" y="492.5" width="182" height="100" rx="12" fill="#ffffff" stroke="#b9b5ad" stroke-width="3" stroke-dasharray="6 5"/>
+<text x="1108" y="536.5" text-anchor="middle" font-size="19" font-weight="700" fill="#7a766e">No AI here</text>
+<text x="1108" y="564.5" text-anchor="middle" font-size="17" fill="#7a766e" opacity="0.85">plain rules only</text>
+<rect x="1224.3333333333335" y="492.5" width="182" height="100" rx="12" fill="#e6f0fb" stroke="#1f5fa8" stroke-width="3"/>
+<text x="1315.3333333333335" y="536.5" text-anchor="middle" font-size="19" font-weight="700" fill="#123f73">Rules decide, save</text>
+<text x="1315.3333333333335" y="564.5" text-anchor="middle" font-size="17" fill="#123f73" opacity="0.85">5 criteria, Supabase</text>
+<rect x="1224.3333333333335" y="627.5" width="182" height="100" rx="12" fill="#fbe9e4" stroke="#a3361c" stroke-width="3"/>
+<text x="1315.3333333333335" y="671.5" text-anchor="middle" font-size="19" font-weight="700" fill="#6b2412">Telegram lead</text>
+<text x="1315.3333333333335" y="699.5" text-anchor="middle" font-size="17" fill="#6b2412" opacity="0.85">Claim + transcript</text>
+<rect x="809.6666666666667" y="627.5" width="182" height="100" rx="12" fill="#ffffff" stroke="#b9b5ad" stroke-width="3" stroke-dasharray="6 5"/>
+<text x="900.6666666666667" y="671.5" text-anchor="middle" font-size="19" font-weight="700" fill="#7a766e">Not built (optional)</text>
+<text x="900.6666666666667" y="699.5" text-anchor="middle" font-size="17" fill="#7a766e" opacity="0.85">HubSpot, own email</text>
+<rect x="1224.3333333333335" y="762.5" width="182" height="100" rx="12" fill="#e8f4dc" stroke="#3f7a12" stroke-width="3"/>
+<text x="1315.3333333333335" y="806.5" text-anchor="middle" font-size="19" font-weight="700" fill="#264d0a">Dashboard</text>
+<text x="1315.3333333333335" y="834.5" text-anchor="middle" font-size="17" fill="#264d0a" opacity="0.85">totals, cost, transcripts</text>
+<rect x="0" y="880" width="1434" height="300" fill="#f7f6f2"/>
+<line x1="0" y1="880" x2="1434" y2="880" stroke="#cfcac0" stroke-width="2"/>
+<text x="30" y="916" font-size="22" font-weight="700" fill="#1f2a3a">Where it runs (deployment)</text>
+<rect x="30" y="980" width="270" height="70" rx="10" fill="#f3f0ea" stroke="#6b6760" stroke-width="2.5"/>
+<text x="165" y="1009" text-anchor="middle" font-size="17" font-weight="700" fill="#33312d">GitHub (private repo)</text>
+<text x="165" y="1033" text-anchor="middle" font-size="14.5" fill="#33312d" opacity="0.85">ishaanpanchal-svg/aangan-phone-agent</text>
+<path d="M300,1015 L360,1015" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<text x="330" y="972" text-anchor="middle" font-size="13" fill="#6b6760">push = deploy</text>
+<rect x="360" y="980" width="330" height="70" rx="10" fill="#e6f0fb" stroke="#1f5fa8" stroke-width="2.5"/>
+<text x="525" y="1009" text-anchor="middle" font-size="17" font-weight="700" fill="#123f73">Vercel (free plan)</text>
+<text x="525" y="1033" text-anchor="middle" font-size="14.5" fill="#123f73" opacity="0.85">aangan-phone-agent-blond.vercel.app</text>
+<path d="M690,1015 L750,1015" stroke="#6b7280" stroke-width="2.4" stroke-dasharray="7 5" marker-end="url(#ah)"/>
+<text x="720" y="972" text-anchor="middle" font-size="13" fill="#6b6760">reads / writes</text>
+<rect x="750" y="980" width="270" height="70" rx="10" fill="#e4f5ee" stroke="#0f7a5a" stroke-width="2.5"/>
+<text x="885" y="1009" text-anchor="middle" font-size="17" font-weight="700" fill="#0b4f3a">Supabase (free plan)</text>
+<text x="885" y="1033" text-anchor="middle" font-size="14.5" fill="#0b4f3a" opacity="0.85">table calls: every call + transcript</text>
+<rect x="1060" y="980" width="340" height="70" rx="10" fill="#eeeafc" stroke="#4f46c8" stroke-width="2.5"/>
+<text x="1230" y="1009" text-anchor="middle" font-size="17" font-weight="700" fill="#352b8f">Vaani + Cal.com + Telegram</text>
+<text x="1230" y="1033" text-anchor="middle" font-size="14.5" fill="#352b8f" opacity="0.85">agent, 30-min meeting, Aangan Designers group</text>
+<text x="30" y="1085" font-size="15" fill="#33312d"><tspan font-weight="700">Webhooks into Vercel:</tspan> Vaani sends each finished call to /webhook/vaani (secret key in the address).</text>
+<text x="30" y="1106" font-size="15" fill="#33312d"><tspan font-weight="700"></tspan> Telegram sends Claim presses to /telegram/webhook (secret token). The server asks Cal.com whether a booking really exists.</text>
+<text x="30" y="1131" font-size="15" fill="#33312d"><tspan font-weight="700">Not built / open:</tspan> HubSpot lead, our own "booked" email (needs Resend), a real Indian phone number (browser test calls only).</text>
+<text x="30" y="1152" font-size="15" fill="#33312d"><tspan font-weight="700"></tspan> Vercel free plan runs timers once a day, so the 30-minute reminder fires when the site is used.</text>
+<text x="717" y="1172" text-anchor="middle" font-size="16" fill="#6b6760">Aangan Studio phone enquiry agent: components map and deployment</text>
+</svg>

@@ -13,7 +13,7 @@ Dashboard: http://localhost:3000 (opens directly; phone numbers are masked). Set
 | Path | What |
 |---|---|
 | `RUBRIC.md` | The pass/fail rules and which check proves each |
-| `docs/` | Automation Brief, Nine Checks and the Cut, Components Map, assumptions |
+| `docs/` | Automation Brief, Nine Checks and the Cut, Components Map (`components-map.png`), assumptions, deploy notes |
 | `agent/agent_instructions.md` | What the voice agent says and never says |
 | `config/business.json` | Every threshold and price range; edit this, not code |
 | `src/` | classify, handoff, pricing guard, notify, store, stats, server, dashboard |
