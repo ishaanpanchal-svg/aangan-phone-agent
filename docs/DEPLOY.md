@@ -1,7 +1,7 @@
 # Going live on Vercel + Supabase
 
 Live address: **https://aangan-phone-agent-blond.vercel.app** (dashboard asks for the password).
-Status: deployed and locked. Supabase table `public.calls` exists (`supabase.sql`).
+Status: LIVE. Env vars set, Supabase connected, Telegram button pointed here. Only the Vaani webhook still points at the laptop tunnel (step 4).
 
 ## What is left (needs your logins; secrets are never typed by the assistant)
 
