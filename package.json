@@ -4,7 +4,7 @@
   "private": true,
   "description": "Phone enquiry agent backend for Aangan Studio (MESA Case 03)",
   "scripts": {
-    "start": "node --env-file=.env src/router.js",
+    "serve": "node --env-file=.env src/router.js",
     "test": "node test/run.js",
     "seed": "node tools/seed.js"
   },

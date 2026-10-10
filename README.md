@@ -5,7 +5,7 @@ MESA Case 03. Phone only. Node 18+, no dependencies.
 ```
 npm test          # 17 checks, all offline (Telegram and email in dry-run)
 npm run seed      # load synthetic sample calls
-set DASHBOARD_PASSWORD=pick-one && set WEBHOOK_SECRET=pick-one && npm start
+set DASHBOARD_PASSWORD=pick-one && set WEBHOOK_SECRET=pick-one && npm run serve
 ```
 
 Dashboard: http://localhost:3000 (password required, locked if none is set).
