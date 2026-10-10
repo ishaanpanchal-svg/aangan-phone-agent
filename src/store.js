@@ -6,10 +6,10 @@ const fs = require('fs');
 const path = require('path');
 
 function openFile(file) {
-  const f = file || path.join(__dirname, '..', 'data', 'calls.json');
-  fs.mkdirSync(path.dirname(f), { recursive: true });
+  // Vercel's disk is read-only except /tmp (not durable: set the Supabase variables for real storage)
+  const f = file || (process.env.VERCEL ? '/tmp/calls.json' : path.join(__dirname, '..', 'data', 'calls.json'));
   const load = () => (fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : []);
-  const save = rows => fs.writeFileSync(f, JSON.stringify(rows, null, 2));
+  const save = rows => { fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, JSON.stringify(rows, null, 2)); };
   return {
     kind: 'file',
     async all() { return load(); },
