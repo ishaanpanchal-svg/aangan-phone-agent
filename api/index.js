@@ -1,6 +1,6 @@
 'use strict';
 // Vercel entry point: every route is rewritten here (see vercel.json). Storage is Supabase when its env vars are set.
-const { createHandler } = require('../src/server');
+const { createHandler } = require('../src/app');
 
 const handler = createHandler({ remindOnRequest: true });
 
