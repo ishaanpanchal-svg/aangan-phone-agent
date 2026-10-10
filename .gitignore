@@ -5,3 +5,4 @@ node_modules/
 SYSTEM_STATUS.md
 webhook_url.txt
 vercel_env.txt
+webhook_url_vercel.txt
