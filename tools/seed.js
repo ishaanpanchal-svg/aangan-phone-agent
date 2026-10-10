@@ -7,5 +7,5 @@ const S = require('../samples/calls');
 (async () => {
   const db = store.open();
   for (const c of Object.values(S)) await processCall(JSON.parse(JSON.stringify(c)), db);
-  console.log('seeded', db.all().length, 'calls');
+  console.log('seeded', (await db.all()).length, 'calls');
 })();

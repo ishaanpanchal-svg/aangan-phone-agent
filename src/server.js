@@ -14,7 +14,7 @@ const safeEq = (a, b) => {
   return x.length === y.length && crypto.timingSafeEqual(x, y);
 };
 
-function createServer(opts = {}) {
+function createHandler(opts = {}) {
   const db = opts.store || store.open();
   const env = opts.env || process.env;
   const dashPw = env.DASHBOARD_PASSWORD;
@@ -30,9 +30,10 @@ function createServer(opts = {}) {
   const json = (res, code, obj) => { res.writeHead(code, { 'content-type': 'application/json' }); res.end(JSON.stringify(obj)); };
   const deny = res => { res.writeHead(401, { 'www-authenticate': 'Basic realm="Aangan"' }); res.end('Password needed'); };
 
-  return http.createServer(async (req, res) => {
+  return async (req, res) => {
     try {
       const url = new URL(req.url, 'http://x');
+      if (opts.remindOnRequest) claims.sendReminders(db).catch(() => {});
       if (req.method === 'POST' && url.pathname === '/webhook/call-ended') {
         if (!hookSecret || !safeEq(req.headers['x-webhook-secret'] || '', hookSecret)) return json(res, 401, { error: 'bad secret' });
         let body = '';
@@ -61,20 +62,28 @@ function createServer(opts = {}) {
         await claims.handleUpdate(JSON.parse(body), db);
         return json(res, 200, { ok: true });
       }
+      if (url.pathname === '/api/cron') {
+        const bearer = (req.headers.authorization || '').replace(/^Bearer /, '');
+        if (!(hookSecret && safeEq(bearer, hookSecret)) && !authed(req)) return deny(res);
+        return json(res, 200, { ok: true, reminded: await claims.sendReminders(db) });
+      }
       if (req.method === 'GET' && url.pathname === '/health') return json(res, 200, { ok: true });
       if (req.method === 'GET' && ['/', '/api/calls', '/api/stats'].includes(url.pathname)) {
         if (!authed(req)) return deny(res);
-        if (url.pathname === '/api/calls') return json(res, 200, db.all());
-        if (url.pathname === '/api/stats') return json(res, 200, compute(db.all()));
+        if (url.pathname === '/api/calls') return json(res, 200, await db.all());
+        if (url.pathname === '/api/stats') return json(res, 200, compute(await db.all()));
         res.writeHead(200, { 'content-type': 'text/html; charset=utf-8' });
         return res.end(fs.readFileSync(path.join(__dirname, 'dashboard.html')));
       }
       json(res, 404, { error: 'not found' });
     } catch (e) {
+      console.error(e);
       json(res, 500, { error: 'server error' });
     }
-  });
+  };
 }
+
+const createServer = opts => http.createServer(createHandler(opts));
 
 if (require.main === module) {
   const port = process.env.PORT || 3000;
@@ -83,4 +92,4 @@ if (require.main === module) {
   createServer({ store: db }).listen(port, () => console.log(`Aangan dashboard on http://localhost:${port}`));
 }
 
-module.exports = { createServer };
+module.exports = { createServer, createHandler };

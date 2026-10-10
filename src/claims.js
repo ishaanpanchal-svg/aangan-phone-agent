@@ -9,7 +9,7 @@ async function handleUpdate(update, db) {
   const cb = update.callback_query;
   if (!cb || !/^claim:/.test(cb.data || '')) return { handled: false };
   const callId = cb.data.slice(6);
-  const row = db.all().find(r => r.callId === callId);
+  const row = (await db.all()).find(r => r.callId === callId);
   if (!row) { await notify.tgApi('answerCallbackQuery', { callback_query_id: cb.id, text: 'Lead not found' }); return { handled: true, result: 'missing' }; }
 
   if (row.claimedBy) {
@@ -17,7 +17,7 @@ async function handleUpdate(update, db) {
     return { handled: true, result: 'already', by: row.claimedBy };
   }
   const name = who(cb.from);
-  db.update(callId, { claimedBy: name, claimedAt: new Date().toISOString() });
+  await db.update(callId, { claimedBy: name, claimedAt: new Date().toISOString() });
   await notify.tgApi('answerCallbackQuery', { callback_query_id: cb.id, text: 'You claimed this lead' });
   if (cb.message) {
     await notify.tgApi('editMessageReplyMarkup', { chat_id: cb.message.chat.id, message_id: cb.message.message_id, reply_markup: { inline_keyboard: [] } });
@@ -28,12 +28,12 @@ async function handleUpdate(update, db) {
 
 async function sendReminders(db, now = Date.now()) {
   let n = 0;
-  for (const r of db.all()) {
+  for (const r of await db.all()) {
     const forwarded = r.outcome === 'Forward' || r.outcome === 'Forward with flag' || r.outcome === 'Human';
     if (!forwarded || r.claimedBy || r.reminded || !r.telegramId) continue;
     if (now - new Date(r.createdAt || r.startedAt).getTime() < REMIND_AFTER_MS) continue;
     await notify.telegramSend('Reminder: this lead is still unclaimed after 30 minutes. ' + (r.fields.name || r.phone), { reply_to_message_id: r.telegramId });
-    db.update(r.callId, { reminded: true });
+    await db.update(r.callId, { reminded: true });
     n++;
   }
   return n;

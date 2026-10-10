@@ -88,7 +88,7 @@ t('C4 claim button: first claim wins, second is refused', async () => {
   const b = await claims.handleUpdate(mk('c2', 'Neel'), db);
   assert.strictEqual(a.result, 'claimed');
   assert.strictEqual(b.result, 'already');
-  assert.strictEqual(db.all()[0].claimedBy, 'Aryan');
+  assert.strictEqual((await db.all())[0].claimedBy, 'Aryan');
 });
 t('C4 reminder after 30 minutes, once, and not if claimed', async () => {
   const claims = require('../src/claims');
@@ -107,14 +107,14 @@ t('C5 repeat caller recognised, webhook retry is idempotent', async () => {
   assert(again.duplicate);
   const second = await processCall({ ...clone(S.qualified), callId: 'r2' }, db);
   assert(second.row.note.includes('repeat caller'));
-  assert.strictEqual(db.all().length, 2);
+  assert.strictEqual((await db.all()).length, 2);
 });
 
 // ---- dashboard (E1, E2)
 t('E1/E2 stats include cost per call and per forwarded lead', async () => {
   const db = tmp();
   for (const k of ['qualified', 'bigOffice', 'lowBudget', 'complaint']) await processCall(clone(S[k]), db);
-  const s = compute(db.all());
+  const s = compute(await db.all());
   assert.strictEqual(s.calls, 4);
   assert.strictEqual(s.forwarded, 2);
   assert.strictEqual(s.human, 1);
@@ -137,6 +137,41 @@ t('agent claims a booking that Cal.com does not have: flagged for a human call',
   const c = await vaani.toCall(p, { env: {} });
   assert(c.bookingClaimed && !c.bookedSlot && c.durationS > 0);
   assert(classify(c).flags.some(f => /none exists in Cal\.com/.test(f)));
+});
+
+// ---- Supabase store (mock fetch: same behaviour as PostgREST)
+t('Supabase store: add is idempotent, byPhone/has/update work', async () => {
+  const rows = [];
+  const fake = async (url, opts = {}) => {
+    const u = new URL(url);
+    const q = u.searchParams;
+    const m = opts.method || 'GET';
+    const ok = body => ({ ok: true, status: 200, text: async () => JSON.stringify(body) });
+    if (m === 'POST') {
+      const b = JSON.parse(opts.body);
+      if (rows.some(r => r.call_id === b.call_id)) return ok([]);
+      rows.push({ ...b, created_at: new Date().toISOString() });
+      return ok([b]);
+    }
+    const pick = f => rows.filter(r => (!q.get('call_id') || r.call_id === q.get('call_id').replace('eq.', '')) && (!q.get('phone') || r.phone === q.get('phone').replace('eq.', '')));
+    if (m === 'PATCH') { const r = pick()[0]; Object.assign(r, JSON.parse(opts.body)); return { ok: true, status: 204, text: async () => '' }; }
+    return ok(pick().map(r => ({ data: r.data, call_id: r.call_id })));
+  };
+  const db = require('../src/store').openSupabase('https://x.supabase.co', 'key', fake);
+  assert.strictEqual(await db.add({ callId: 'a', phone: '1', n: 1 }), true);
+  assert.strictEqual(await db.add({ callId: 'a', phone: '1', n: 2 }), false);
+  assert.strictEqual(await db.has('a'), true);
+  assert.strictEqual((await db.byPhone('1')).length, 1);
+  await db.update('a', { claimedBy: 'Aryan' });
+  assert.strictEqual((await db.all())[0].claimedBy, 'Aryan');
+});
+t('Vercel entry restores the original path after the rewrite', async () => {
+  const seen = [];
+  const handler = require('../src/server').createHandler({ store: tmp(), env: { DASHBOARD_PASSWORD: 'pw' } });
+  const entry = require('../api/index.js');
+  const res = { writeHead: c => seen.push(c), end: () => {} };
+  await entry({ url: '/api/index?path=api%2Fstats', headers: {}, method: 'GET' }, res);
+  assert(seen.length === 1);
 });
 
 // ---- Vaani adapter

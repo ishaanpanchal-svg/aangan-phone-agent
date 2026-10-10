@@ -7,8 +7,8 @@ const { stripPrices } = require('./pricing');
 const { callCost } = require('./stats');
 
 async function processCall(call, store) {
-  if (store.has(call.callId)) return { duplicate: true };
-  const prior = store.byPhone(call.phone);
+  if (await store.has(call.callId)) return { duplicate: true };
+  const prior = await store.byPhone(call.phone);
   call.repeatCaller = prior.length > 0;
 
   const result = classify(call);
@@ -33,14 +33,14 @@ async function processCall(call, store) {
     cost: callCost(call),
     costInr: call.costInr,
   };
-  store.add(row);
+  await store.add(row);
 
   const transcriptText = call.transcript.map(t => `${t.role === 'caller' ? 'Caller' : 'Agent'}: ${t.text}`).join('\n');
   if (result.outcome === 'Forward' || result.outcome === 'Forward with flag' || result.outcome === 'Human') {
     row.telegramId = await notify.sendLead(row, (result.outcome === 'Human' ? 'NEEDS A PERSON\n' : '') + note, transcriptText);
   }
   if (row.bookedSlot && result.outcome !== 'Decline') await notify.sendBookingEmail(row, note);
-  store.update(row.callId, { telegramId: row.telegramId || null });
+  await store.update(row.callId, { telegramId: row.telegramId || null });
   return { duplicate: false, row };
 }
 
